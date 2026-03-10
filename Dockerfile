@@ -9,6 +9,6 @@ COPY . .
 
 RUN chmod +x ./scripts/docker-entrypoint.sh
 
-EXPOSE 3000
+EXPOSE 3001
 
 CMD ["./scripts/docker-entrypoint.sh"]

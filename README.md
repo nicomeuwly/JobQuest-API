@@ -8,7 +8,7 @@ bunx prisma db push
 bun run dev
 ```
 
-API base URL: `http://localhost:3000/api/v1`
+API base URL: `http://localhost:3001/api/v1`
 
 ## Docker setup
 ```bash
@@ -18,7 +18,7 @@ docker compose up --build
 ```
 
 Services:
-- API: `http://localhost:3000/api/v1`
+- API: `http://localhost:3001/api/v1`
 
 Useful commands:
 ```bash
