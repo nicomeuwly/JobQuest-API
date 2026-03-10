@@ -2,6 +2,7 @@ import { Elysia, t } from "elysia";
 import { prisma } from "../lib/prisma";
 import { signJwt } from "../lib/jwt";
 import { HttpError } from "../common/http-error";
+import { buildAuthCookie, clearAuthCookie } from "../common/cookies";
 
 export const authRoutes = new Elysia()
   .post(
@@ -21,6 +22,7 @@ export const authRoutes = new Elysia()
       });
 
       const token = await signJwt(user.id, user.email);
+      set.headers["Set-Cookie"] = buildAuthCookie(token);
       set.status = 201;
 
       return { user, token };
@@ -37,7 +39,7 @@ export const authRoutes = new Elysia()
   )
   .post(
     "/auth/login",
-    async ({ body }) => {
+    async ({ body, set }) => {
       const user = await prisma.user.findUnique({
         where: { email: body.email.toLowerCase().trim() },
       });
@@ -48,6 +50,7 @@ export const authRoutes = new Elysia()
       if (!validPassword) throw new HttpError(401, "Invalid credentials");
 
       const token = await signJwt(user.id, user.email);
+      set.headers["Set-Cookie"] = buildAuthCookie(token);
 
       return {
         user: {
@@ -68,4 +71,9 @@ export const authRoutes = new Elysia()
         { additionalProperties: false }
       ),
     }
-  );
+  )
+  .post("/auth/logout", ({ set }) => {
+    set.headers["Set-Cookie"] = clearAuthCookie();
+    set.status = 204;
+    return null;
+  });
